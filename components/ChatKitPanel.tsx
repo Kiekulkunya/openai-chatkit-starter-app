@@ -193,10 +193,7 @@ export function ChatKitPanel({
           body: JSON.stringify({
             workflow: { id: WORKFLOW_ID },
             chatkit_configuration: {
-              // enable attachments
-              file_upload: {
-                enabled: true,
-              },
+              file_upload: { enabled: true },
             },
           }),
         });
@@ -273,10 +270,7 @@ export function ChatKitPanel({
     },
     composer: {
       placeholder: PLACEHOLDER_INPUT,
-      attachments: {
-        // Enable attachments
-        enabled: true,
-      },
+      attachments: { enabled: true },
     },
     threadItemActions: {
       feedback: false,
@@ -324,8 +318,6 @@ export function ChatKitPanel({
       processedFacts.current.clear();
     },
     onError: ({ error }: { error: unknown }) => {
-      // Note that Chatkit UI handles errors for your users.
-      // Thus, your app code doesn't need to display errors on UI.
       console.error("ChatKit error", error);
     },
   });
@@ -344,7 +336,7 @@ export function ChatKitPanel({
   }
 
   return (
-    <div className="relative pb-8 flex h-[90vh] w-full rounded-2xl flex-col overflow-hidden bg-white shadow-sm transition-colors dark:bg-slate-900">
+    <div className="relative pb-8 flex h-[90vh] w-full rounded-2xl flex-col overflow-hidden bg-[#0b0b0b] text-white shadow-sm transition-colors">
       <ChatKit
         key={widgetInstanceKey}
         control={chatkit.control}
@@ -372,15 +364,9 @@ function extractErrorDetail(
   payload: Record<string, unknown> | undefined,
   fallback: string
 ): string {
-  if (!payload) {
-    return fallback;
-  }
-
+  if (!payload) return fallback;
   const error = payload.error;
-  if (typeof error === "string") {
-    return error;
-  }
-
+  if (typeof error === "string") return error;
   if (
     error &&
     typeof error === "object" &&
@@ -389,17 +375,11 @@ function extractErrorDetail(
   ) {
     return (error as { message: string }).message;
   }
-
   const details = payload.details;
-  if (typeof details === "string") {
-    return details;
-  }
-
+  if (typeof details === "string") return details;
   if (details && typeof details === "object" && "error" in details) {
     const nestedError = (details as { error?: unknown }).error;
-    if (typeof nestedError === "string") {
-      return nestedError;
-    }
+    if (typeof nestedError === "string") return nestedError;
     if (
       nestedError &&
       typeof nestedError === "object" &&
@@ -409,10 +389,6 @@ function extractErrorDetail(
       return (nestedError as { message: string }).message;
     }
   }
-
-  if (typeof payload.message === "string") {
-    return payload.message;
-  }
-
+  if (typeof payload.message === "string") return payload.message;
   return fallback;
 }
